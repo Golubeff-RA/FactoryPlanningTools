@@ -3,7 +3,7 @@
 class Tool {
 public:
     struct TimeInterval {
-        const uint64_t start;
+        const int64_t start;
         const uint64_t end;
     };
 
