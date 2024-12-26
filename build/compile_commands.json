@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/romka/source/FactoryPlanning/build",
-  "command": "/usr/bin/clang++-16   -Wall -Werror -Wsign-compare -g -std=gnu++17 -o CMakeFiles/main.dir/main.cpp.o -c /home/romka/source/FactoryPlanning/main.cpp",
-  "file": "/home/romka/source/FactoryPlanning/main.cpp"
-}
-]
