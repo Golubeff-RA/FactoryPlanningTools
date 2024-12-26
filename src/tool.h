@@ -40,10 +40,6 @@ public:
         return std::nullopt;
     }
 
-    bool Available(uint64_t timestamp, uint64_t timespan) {
-        if (CanStartWork)
-    }
-
 
 private:
     const std::vector<TimeInterval> shedule_;
