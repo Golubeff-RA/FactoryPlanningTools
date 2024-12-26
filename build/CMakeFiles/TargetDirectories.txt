@@ -1,3 +1,0 @@
-/home/romka/source/FactoryPlanning/build/CMakeFiles/main.dir
-/home/romka/source/FactoryPlanning/build/CMakeFiles/edit_cache.dir
-/home/romka/source/FactoryPlanning/build/CMakeFiles/rebuild_cache.dir

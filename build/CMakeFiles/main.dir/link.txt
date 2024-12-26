@@ -1,1 +1,0 @@
-/usr/bin/clang++-16 -Wall -Werror -Wsign-compare -g CMakeFiles/main.dir/main.cpp.o -o main 
