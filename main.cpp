@@ -2,7 +2,7 @@
 #include "src/tool.h"
 
 int main() {
-    Tool::TimeInterval test{100, 1000};
-    std::cout << test.start << " || " << test.end;
+    std::vector<Tool::TimeInterval> intervals = {{20, 40}, {50, 80}, {90, 120}};
+    Tool test_tool(intervals);
     return 0;
 }

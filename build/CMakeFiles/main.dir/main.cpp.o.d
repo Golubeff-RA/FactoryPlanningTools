@@ -172,6 +172,8 @@ CMakeFiles/main.dir/main.cpp.o: \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/istream \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/istream.tcc \
   /home/romka/source/FactoryPlanning/src/tool.h \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/optional \
+  /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/enable_special_members.h \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/vector \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/stl_uninitialized.h \
   /usr/bin/../lib/gcc/x86_64-linux-gnu/12/../../../../include/c++/12/bits/stl_vector.h \

@@ -186,6 +186,8 @@ CMakeFiles/main.dir/main.cpp.o: ../main.cpp \
   /usr/include/c++/12/istream \
   /usr/include/c++/12/bits/istream.tcc \
   ../src/tool.h \
+  /usr/include/c++/12/optional \
+  /usr/include/c++/12/bits/enable_special_members.h \
   /usr/include/c++/12/vector \
   /usr/include/c++/12/bits/stl_uninitialized.h \
   /usr/include/c++/12/bits/stl_vector.h \
@@ -196,6 +198,8 @@ CMakeFiles/main.dir/main.cpp.o: ../main.cpp \
 /usr/include/c++/12/bits/stl_bvector.h:
 
 /usr/include/c++/12/bits/stl_vector.h:
+
+/usr/include/c++/12/bits/enable_special_members.h:
 
 ../src/tool.h:
 
@@ -522,6 +526,8 @@ CMakeFiles/main.dir/main.cpp.o: ../main.cpp \
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
 /usr/include/c++/12/bits/ostream_insert.h:
+
+/usr/include/c++/12/optional:
 
 /usr/include/c++/12/bits/allocator.h:
 

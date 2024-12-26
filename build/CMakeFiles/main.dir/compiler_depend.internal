@@ -187,6 +187,8 @@ CMakeFiles/main.dir/main.cpp.o
  /usr/include/c++/12/istream
  /usr/include/c++/12/bits/istream.tcc
  /home/romka/source/FactoryPlanning/src/tool.h
+ /usr/include/c++/12/optional
+ /usr/include/c++/12/bits/enable_special_members.h
  /usr/include/c++/12/vector
  /usr/include/c++/12/bits/stl_uninitialized.h
  /usr/include/c++/12/bits/stl_vector.h
