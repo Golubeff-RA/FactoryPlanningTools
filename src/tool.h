@@ -9,6 +9,15 @@ public:
         uint64_t GetTimeSpan() const {
             return end - start;
         }
+
+        uint64_t GetTimeSpan(uint64_t timestamp) const {
+            if (end >= timestamp) {
+                return end - timestamp;
+            }
+
+            return 0;
+        }
+
         const uint64_t start;
         const uint64_t end;
     };
@@ -21,6 +30,7 @@ public:
     }
 
     std::optional<size_t> CanStartWork(uint64_t timestamp) {
+
         for (size_t idx = 0; idx < shedule_.size(); ++idx) {
             if (timestamp > shedule_[idx].start && timestamp < shedule_[idx].end) {
                 return idx;
@@ -30,8 +40,8 @@ public:
         return std::nullopt;
     }
 
-    bool Available(uint64_t timestamp) {
-        if (CanStartWork(timestamp))
+    bool Available(uint64_t timestamp, uint64_t timespan) {
+        if (CanStartWork)
     }
 
 
