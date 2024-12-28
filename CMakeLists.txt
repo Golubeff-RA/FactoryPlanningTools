@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6.0)
-project(shad_workspace VERSION 0.1.0)
+project(FactoryPlanningTools VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -10,13 +10,13 @@ set(CMAKE_CXX_FLAGS_ASAN "-g -fsanitize=address,undefined -fno-sanitize-recover=
     CACHE STRING "Compiler flags in asan build"
     FORCE)
 
-set(CMAKE_CXX_FLAGS_SHADREL "-O2 -DNDEBUG"
-    CACHE STRING "Compiler flags for the release version that executes on Yandex.Contest"
+set(CMAKE_CXX_FLAGS_REL "-O2 -DNDEBUG"
+    CACHE STRING "Compiler flags for the release version"
     FORCE)
 
 message("General compiler flags: " ${CMAKE_CXX_FLAGS})
 message("Debug build compiler flags: " ${CMAKE_CXX_FLAGS_DEBUG})
 message("ASAN build compiler flags: " ${CMAKE_CXX_FLAGS_ASAN})
-message("ShadRel build compiler flags: " ${CMAKE_CXX_FLAGS_SHADREL})
+message("Release build compiler flags: " ${CMAKE_CXX_FLAGS_REL})
 
 add_executable(main main.cpp)

@@ -19,9 +19,9 @@
                 "buildType": "Asan"
             },
             "shad_release": {
-                "short": "ShadRel",
-                "long": "Release version for Yandex.Contest",
-                "buildType": "ShadRel"
+                "short": "Release",
+                "long": "Release version",
+                "buildType": "Release"
             }
         }
     }
