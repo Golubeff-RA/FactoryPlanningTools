@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <map>
 #include <vector>
 
 // Хранит инфу о том какие операции надо назначить, чтобы выполнить работу
@@ -13,7 +14,7 @@ public:
         const bool stoppable;     // прерываемая или нет
         uint64_t start_time = 0;  // начало выполнения
         uint64_t end_time = 0;    // конец выполнения
-        const std::vector<uint64_t> previous_ops_id;  // предшественники
+        const std::set<uint64_t> previous_ops_id;  // предшественники
         const std::vector<uint64_t>
             possible_tools;  // на каких исполнителях можно выполнить
         Operation(uint64_t span, bool stoppable,
@@ -27,7 +28,7 @@ public:
 
     bool CanBeAppointed(const Operation& operation, uint64_t timestamp) {
         for (uint64_t prev : operation.previous_ops_id) {
-            if (operations_[prev].end_time == 0 || operations_[prev].end_time > timestamp) {
+            if (operations_[prev]->end_time == 0 || operations_[prev]->end_time > timestamp) {
                 return false;
             }
         }
@@ -36,5 +37,8 @@ public:
     }
 
 private:
-    std::vector<Operation> operations_;  // Множество всех операций
+    std::map<uint64_t, std::shared_ptr<Operation>> operations_;  // Множество всех операций в данной работе
+    uint64_t start_time_;
+    uint64_t directive_;
+    uint64_t fine_coef_;
 };
