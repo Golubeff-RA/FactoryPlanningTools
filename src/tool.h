@@ -56,7 +56,7 @@ public:
         return answer;
     }
 
-    bool IsAvailable(uint64_t timestamp, uint64_t timespan, bool stoppable) {
+    bool IsAvailable(uint64_t timestamp, uint64_t timespan, bool stoppable = true) {
         auto idx = CanStartWork(timestamp);
         if (idx.has_value()) {
             // если операция прерываемая, то сумма длин всех интервалов начиная
@@ -74,6 +74,12 @@ public:
         }
 
         return false;
+    }
+
+    // Положим в именованное расписание исполнителя выполнение операции
+    void Appoint(uint64_t start, uint64_t end, uint32_t operation) {
+        
+        work_process_.push_back({start, end, operation});
     }
 
 private:
