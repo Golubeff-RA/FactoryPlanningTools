@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <optional>
 #include <vector>
+#include <set>
+#include "work.h"
 
 class Tool {
 public:
@@ -19,6 +21,22 @@ public:
 
         const uint64_t start;
         const uint64_t end;
+        // проверяет интервал на пересечение с другим
+        bool Intersects(const TimeInterval& other) const {
+            return !(end < other.start || other.end < start);
+        }
+        
+        bool operator<(const TimeInterval& other) const {
+            return start < other.start;
+        }
+
+        bool operator==(const TimeInterval& other) const {
+            return start <= other.start && other.end <= end;
+        }
+
+        bool operator!=(const TimeInterval& other) const {
+            return !(this->operator==(other));
+        }
     };
 
     struct NamedTimeInterval : TimeInterval {
@@ -27,59 +45,60 @@ public:
         const uint32_t operation;
     };
 
-    Tool(const std::vector<TimeInterval>& shedule)
-        : shedule_(std::move(shedule)) {}
+    Tool(std::initializer_list<TimeInterval> shedule) : shedule_(shedule) {}
 
-    // вернёт индекс интервала из общего расписания, если исполнитель может
-    // начать работу
-    std::optional<size_t> CanStartWork(uint64_t timestamp) {
-        // проверим есть ли эта временная метка в общем расписании исполнителя
-        size_t answer = shedule_.size();
-        for (size_t idx = 0; idx < shedule_.size(); ++idx) {
-            if (timestamp >= shedule_[idx].start &&
-                timestamp < shedule_[idx].end) {
-                answer = idx;
-            }
-        }
-        // проверим нет ли этой временной метки в именованном расписании
-        // исполнителя
-        if (answer != shedule_.size()) {
-            for (const auto& named : work_process_) {
-                if (named.start <= timestamp && named.end > timestamp) {
-                    return std::nullopt;
-                }
-            }
-        } else {
-            return std::nullopt;
+    bool CanStartWork(const Work::Operation& operation, uint64_t timestamp) {
+        TimeInterval interval {timestamp, timestamp};
+        auto it = shedule_.lower_bound(interval);
+
+        if (it == shedule_.begin() && it->start > timestamp) {
+            return false;
         }
 
-        return answer;
-    }
+        if (it == shedule_.end() || it->start > timestamp) {
+            it = std::prev(it);
+        } 
 
-    bool IsAvailable(uint64_t timestamp, uint64_t timespan, bool stoppable = true) {
-        auto idx = CanStartWork(timestamp);
-        if (idx.has_value()) {
-            // если операция прерываемая, то сумма длин всех интервалов начиная
-            // с shedule_[idx] должна быть >= timespan
-            if (stoppable) {
-                uint64_t sum_span = shedule_[(*idx)++].GetTimeSpan(timestamp);
-                while (sum_span < timespan && (*idx) < shedule_.size()) {
-                    sum_span += shedule_[(*idx)++].GetTimeSpan();
+        // мы можем попробовать начать выполнение операции, но 
+        // надо убедиться, что в рабочем расписании есть место.
+        if (timestamp >= it->start && timestamp < it->end) {
+            // проверим не занят ли исполнитель в это время
+            for (auto& gant: work_process_) {
+                if (gant.Intersects(interval)) {
+                    return false;
                 }
-                return sum_span >= timespan;
             }
-            // если непрерываемая то в интервале от idx должно быть
-            // достаточно времени
-            return shedule_[(*idx)].GetTimeSpan(timestamp) >= timespan;
+            
+            if (operation.stoppable) {
+                uint64_t time = 0;
+                while (it != shedule_.end() && time < operation.timespan) {
+                    time += it->GetTimeSpan(timestamp);
+                    it = std::next(it);
+                    timestamp = it->start;
+                }
+                
+                return time >= operation.timespan;
+            } else {
+                return it->GetTimeSpan(timestamp) >= operation.timespan;
+            }
         }
 
         return false;
     }
 
     // Положим в именованное расписание исполнителя выполнение операции
-    void Appoint(uint64_t start, uint64_t end, uint32_t operation) {
+    void Appoint(const Work::Operation& operation, uint32_t id, uint64_t timestamp) {
+        uint64_t time = 0;
         
-        work_process_.push_back({start, end, operation});
+        while (time < operation.timespan) {
+
+        }
+    }
+
+    void PrintShedule() {
+        for (auto inter : shedule_) {
+            std::cout << inter.start << " || " << inter.end << std::endl;
+        }
     }
 
 private:
@@ -88,9 +107,9 @@ private:
     // нужно перегрузить операторы < и == ?
     // или учитывая что shedule_ сортированный, то можно бин_поиском искать
     // нужный
-    const std::vector<TimeInterval>
+    const std::set<TimeInterval>
         shedule_;  // изначальное расписание исполнителя
-    std::vector<NamedTimeInterval>
+    std::set<NamedTimeInterval>
         work_process_;  // расписание в которое будем класть назначенную
                         // операцию
 };
