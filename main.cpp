@@ -4,11 +4,12 @@
 
 int main() {
     Tool test_tool {{35, 40}, {50, 70}, {10, 30}, {75, 80}};
-    test_tool.Appoint(35, 40, 99);
-
-    Work::Operation oper {10, false, {}, {1}};
     test_tool.PrintShedule();
 
-    std::cout<< test_tool.CanStartWork(oper, 61) << std::endl;;
+    Work::Operation oper {23, true, {}, {1}};
+    std::cout<< test_tool.CanStartWork(oper, 50) << std::endl;;
+    test_tool.Appoint(oper, 77, 15);
+    test_tool.PrintGant();
+    std::cout << "\n" << oper.end_time;
     return 0;
 }
