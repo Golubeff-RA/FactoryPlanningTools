@@ -3,6 +3,7 @@ project(FactoryPlanningTools VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -g")
 
 list(APPEND CMAKE_CXX_FLAGS "-Wall -Werror -Wsign-compare")
 
@@ -14,9 +15,15 @@ set(CMAKE_CXX_FLAGS_REL "-O2 -DNDEBUG"
     CACHE STRING "Compiler flags for the release version"
     FORCE)
 
+
 message("General compiler flags: " ${CMAKE_CXX_FLAGS})
 message("Debug build compiler flags: " ${CMAKE_CXX_FLAGS_DEBUG})
 message("ASAN build compiler flags: " ${CMAKE_CXX_FLAGS_ASAN})
 message("Release build compiler flags: " ${CMAKE_CXX_FLAGS_REL})
 
-add_executable(main main.cpp)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp)
+add_executable(${PROJECT_NAME}.tests ${CMAKE_SOURCE_DIR}/tests/test_main.cpp)
+
+target_link_libraries(${PROJECT_NAME}.tests gtest gmock pthread)

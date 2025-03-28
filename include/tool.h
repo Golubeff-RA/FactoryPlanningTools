@@ -3,6 +3,7 @@
 #include <optional>
 #include <set>
 #include <vector>
+#include <iostream>
 
 #include "work.h"
 
@@ -46,9 +47,9 @@ public:
         const uint32_t operation;
     };
 
-    Tool(std::initializer_list<TimeInterval> shedule) : shedule_(shedule) {}
+    Tool(std::initializer_list<TimeInterval>&& shedule) : shedule_(shedule) {}
 
-    bool CanStartWork(const Work::Operation& operation, uint64_t timestamp) {
+    bool CanStartWork(const Work::Operation& operation, uint64_t timestamp, uint64_t timespan) {
         auto it = GetStartIterator(timestamp);
         if (it == shedule_.end()) {
             return false;
@@ -66,26 +67,26 @@ public:
 
         if (operation.stoppable) {
             uint64_t time = 0;
-            while (it != shedule_.end() && time < operation.timespan) {
+            while (it != shedule_.end() && time < timespan) {
                 time += it->GetTimeSpan(timestamp);
                 it = std::next(it);
                 timestamp = it->start;
             }
 
-            return time >= operation.timespan;
+            return time >= timespan;
         } else {
-            return it->GetTimeSpan(timestamp) >= operation.timespan;
+            return it->GetTimeSpan(timestamp) >= timespan;
         }
     }
 
     // Положим в именованное расписание исполнителя выполнение операции
     void Appoint(Work::Operation& operation, uint32_t id,
-                 uint64_t timestamp) {
+                 uint64_t timestamp, uint64_t timespan) {
         uint64_t time = 0;
         auto it = GetStartIterator(timestamp);
         operation.start_time = timestamp;
-        while (it != shedule_.end() && time < operation.timespan) {
-            work_process_.insert({timestamp, std::min(it->end, timestamp + operation.timespan - time), id});
+        while (it != shedule_.end() && time < timespan) {
+            work_process_.insert({timestamp, std::min(it->end, timestamp + timespan - time), id});
             time += it->GetTimeSpan(timestamp);
             it = std::next(it);
             timestamp = it->start;

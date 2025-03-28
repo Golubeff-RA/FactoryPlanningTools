@@ -10,18 +10,16 @@
 class Work {
 public:
     struct Operation {
-        const uint64_t timespan;  // продолжительность работы
         const bool stoppable;     // прерываемая или нет
         uint64_t start_time = 0;  // начало выполнения
         uint64_t end_time = 0;    // конец выполнения
         const std::set<uint64_t> previous_ops_id;  // предшественники
         const std::vector<uint64_t>
             possible_tools;  // на каких исполнителях можно выполнить
-        Operation(uint64_t span, bool stoppable,
-                  std::initializer_list<uint64_t>&& previous,
-                  std::initializer_list<uint64_t>&& tools)
-            : timespan(span),
-              stoppable(stoppable),
+        Operation(bool stoppable,
+                  const std::initializer_list<uint64_t>& previous,
+                  const std::initializer_list<uint64_t>& tools)
+            : stoppable(stoppable),
               previous_ops_id(previous),
               possible_tools(tools){};
     };
@@ -37,8 +35,8 @@ public:
     }
 
 private:
-    std::map<uint64_t, std::shared_ptr<Operation>> operations_;  // Множество всех операций в данной работе
-    uint64_t start_time_;
+    std::vector<std::shared_ptr<Operation>> operations_;  // Множество всех операций в данной работе
+    /*uint64_t start_time_;
     uint64_t directive_;
-    uint64_t fine_coef_;
+    uint64_t fine_coef_;*/
 };
