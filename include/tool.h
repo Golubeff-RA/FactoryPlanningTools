@@ -60,7 +60,7 @@ public:
         return *this;
     }
 
-    bool CanStartWork(const Work::Operation& operation, uint64_t timestamp,
+    bool CanStartWork(const Operation& operation, uint64_t timestamp,
                       uint64_t timespan) {
         auto it = GetStartIterator(timestamp);
         if (it == shedule_.end()) {
@@ -92,7 +92,7 @@ public:
     }
 
     // Положим в именованное расписание исполнителя выполнение операции
-    void Appoint(Work::Operation& operation, uint32_t id, uint64_t timestamp,
+    void Appoint(Operation& operation, uint32_t id, uint64_t timestamp,
                  uint64_t timespan) {
         if (work_process_.find(NamedTimeInterval(timestamp, timestamp, id)) != work_process_.end()) {
             throw std::runtime_error("Collision!");
