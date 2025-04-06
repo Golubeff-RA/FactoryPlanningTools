@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -g")
 
-list(APPEND CMAKE_CXX_FLAGS "-Wall -Werror -Wsign-compare")
+list(APPEND CMAKE_CXX_FLAGS "-g -Wall -Werror -Wsign-compare")
 
 set(CMAKE_CXX_FLAGS_ASAN "-g -fsanitize=address,undefined -fno-sanitize-recover=all -O2"
     CACHE STRING "Compiler flags in asan build"
