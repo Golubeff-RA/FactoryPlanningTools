@@ -20,11 +20,13 @@ int main() {
     std::cout << "\n" << oper.end_time;*/
     std::ifstream fin;
     fin.open("../test_data/data.DAT");
-    ProblemData pd(fin);
-    fin.close();
-    pd.print();
+    //ProblemData pd(fin);
+    //fin.close();
+    //pd.print();
 
     Solver solver{ProblemData(fin)};
+    solver.Solve();
+    std::cout << "success";
 
     return 0;
 }
