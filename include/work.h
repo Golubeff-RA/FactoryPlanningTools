@@ -5,6 +5,7 @@
 #include <set>
 #include <map>
 #include <vector>
+#include <iostream>
 
 // Хранит инфу о том какие операции надо назначить, чтобы выполнить работу
 class Work {
@@ -22,6 +23,10 @@ public:
             : stoppable(stoppable),
               previous_ops_id(previous),
               possible_tools(tools){};
+        Operation(bool stoppable,
+                const std::set<uint64_t>& previous)
+          : stoppable(stoppable),
+            previous_ops_id(previous){};
     };
 
     bool CanBeAppointed(const Operation& operation, uint64_t timestamp) {
@@ -33,10 +38,28 @@ public:
 
         return true;
     }
+    Work() {}
+    Work(uint64_t st_time, uint64_t directive, uint64_t fine_coef, std::vector<Operation*>& operations) :
+        start_time_(st_time),  directive_(directive), fine_coef_(fine_coef), operations_(operations) {}
+
+    void setStartTime(uint64_t start_time) { start_time_ = start_time;}
+    void setDirective(uint64_t directive) { directive_= directive;}
+    void setFineCoef(uint64_t fine_coef) { fine_coef_= fine_coef;}
+    void setOperations(std::vector<Operation*>& operations ) {operations_ = operations;}
+
+    void print() {
+        std::cout << start_time_ <<' ' << directive_ <<' ' << fine_coef_ <<' ';
+        for(auto e : operations_){
+            std::cout << e->stoppable <<' ' << "/*prev ";
+            for(auto o : e->previous_ops_id) std::cout << o <<' ';
+            std::cout << "prev*/";
+        }
+        std::cout << "\n\n";
+    }
 
 private:
-    std::vector<std::shared_ptr<Operation>> operations_;  // Множество всех операций в данной работе
-    /*uint64_t start_time_;
+    uint64_t start_time_;
     uint64_t directive_;
-    uint64_t fine_coef_;*/
+    uint64_t fine_coef_;
+    std::vector<Operation*> operations_;  // Множество всех операций в данной работе
 };

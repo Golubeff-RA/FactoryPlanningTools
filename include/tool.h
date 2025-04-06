@@ -47,7 +47,7 @@ public:
         const uint32_t operation;
     };
 
-    Tool(std::initializer_list<TimeInterval>&& shedule) : shedule_(shedule) {}
+    Tool(std::set<TimeInterval>& shedule) : shedule_(shedule) {}
 
     bool CanStartWork(const Work::Operation& operation, uint64_t timestamp, uint64_t timespan) {
         auto it = GetStartIterator(timestamp);
@@ -105,7 +105,6 @@ public:
             std::cout << "(" << inter.start << ", " << inter.end << ", " << inter.operation << ") ";
         }
     }
-
 private:
     std::set<Tool::TimeInterval>::const_iterator GetStartIterator(
         uint64_t timestamp) {
