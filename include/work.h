@@ -15,22 +15,24 @@ public:
         uint64_t start_time = 0;  // начало выполнения
         uint64_t end_time = 0;    // конец выполнения
         const std::set<uint64_t> previous_ops_id;  // предшественники
-        const std::vector<uint64_t>
-            possible_tools;  // на каких исполнителях можно выполнить
+        const std::vector<uint64_t> possible_tools;  // на каких исполнителях можно выполнить
+        const size_t number_;
         Operation(bool stoppable,
                   const std::initializer_list<uint64_t>& previous,
-                  const std::initializer_list<uint64_t>& tools)
+                  const std::initializer_list<uint64_t>& tools, size_t number)
             : stoppable(stoppable),
               previous_ops_id(previous),
-              possible_tools(tools){};
+              possible_tools(tools), 
+              number_(number){};
         Operation(bool stoppable,
-                const std::set<uint64_t>& previous)
+                const std::set<uint64_t>& previous, size_t number)
           : stoppable(stoppable),
-            previous_ops_id(previous){};
+            previous_ops_id(previous), 
+            number_(number){};
     };
 
-    bool CanBeAppointed(const Operation& operation, uint64_t timestamp) {
-        for (uint64_t prev : operation.previous_ops_id) {
+    bool CanBeAppointed(const size_t idOperation, uint64_t timestamp) {
+        for (uint64_t prev : operations_[idOperation]->previous_ops_id) {
             if (operations_[prev]->end_time == 0 || operations_[prev]->end_time > timestamp) {
                 return false;
             }
@@ -38,6 +40,8 @@ public:
 
         return true;
     }
+
+    bool CanStarted(uint64_t time) { return time > start_time_;}
     Work() {}
     Work(uint64_t st_time, uint64_t directive, uint64_t fine_coef, std::vector<Operation*>& operations) :
         start_time_(st_time),  directive_(directive), fine_coef_(fine_coef), operations_(operations) {}

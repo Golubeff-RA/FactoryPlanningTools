@@ -12,6 +12,7 @@ public:
     std::vector<Tool> tools_;
     std::vector<Work> works_;
     std::vector<std::vector<uint64_t>> times_matrix_;
+    size_t getCntOperations() { return times_matrix_.size();}
     void print() {
         std::cout << "hkhkhk  ";
         for(auto t : works_) {
@@ -32,10 +33,6 @@ private:
     void fillFines(std::ifstream &input);
     void fillWork(std::ifstream &input);
 };
-
-
-
-
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 ProblemData::ProblemData(std::ifstream &input){ 
@@ -193,7 +190,7 @@ void ProblemData::fillWork(std::ifstream &input) {
 
     std::vector<Work::Operation*> vOper;
     for (size_t i = 0; i < operationsContinius_.size(); ++i) {
-        vOper.push_back(new Work::Operation(operationsContinius_[i], g[i]));
+        vOper.push_back(new Work::Operation(operationsContinius_[i], g[i], i));
     }
     
     works_[indWork_++].setOperations(vOper);
