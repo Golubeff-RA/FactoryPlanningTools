@@ -4,10 +4,10 @@
 //здесь будем решать задачу
 class Solver {
 public:
-    Solver(ProblemData&& data) : data_(std::move(data)) {};
+    Solver(const ProblemData& data) : data_(data) {};
 
-    void SetData(ProblemData&& data) {
-        data_ = std::move(data);
+    void SetData(const ProblemData& data) {
+        data_ = data;
     }
 
     uint64_t Solve(std::vector<Tool::NamedTimeInterval>& gant_plot);

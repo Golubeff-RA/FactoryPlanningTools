@@ -1,9 +1,9 @@
 #pragma once
 #include <cstdint>
+#include <iostream>
 #include <optional>
 #include <set>
 #include <vector>
-#include <iostream>
 
 #include "work.h"
 
@@ -11,6 +11,8 @@ class Tool {
 public:
     struct TimeInterval {
         TimeInterval(uint64_t start, uint64_t end) : start(start), end(end) {}
+        TimeInterval(const TimeInterval& other) : start(other.start), end(other.end) {}
+
         uint64_t GetTimeSpan() const { return end - start; }
 
         uint64_t GetTimeSpan(uint64_t timestamp) const {
@@ -47,9 +49,18 @@ public:
         const uint32_t operation;
     };
 
-    Tool(std::set<TimeInterval>& shedule) : shedule_(shedule) {}
+    Tool(const std::set<TimeInterval>& shedule) : shedule_(shedule) {}
+    Tool(std::initializer_list<TimeInterval>& shedule) : shedule_(shedule){}
 
-    bool CanStartWork(const Work::Operation& operation, uint64_t timestamp, uint64_t timespan) {
+    Tool& operator=(const Tool& other) {
+        shedule_ = other.shedule_;
+        work_process_ = other.work_process_;
+
+        return *this;
+    }
+
+    bool CanStartWork(const Work::Operation& operation, uint64_t timestamp,
+                      uint64_t timespan) {
         auto it = GetStartIterator(timestamp);
         if (it == shedule_.end()) {
             return false;
@@ -80,13 +91,15 @@ public:
     }
 
     // Положим в именованное расписание исполнителя выполнение операции
-    void Appoint(Work::Operation& operation, uint32_t id,
-                 uint64_t timestamp, uint64_t timespan) {
+    void Appoint(Work::Operation& operation, uint32_t id, uint64_t timestamp,
+                 uint64_t timespan) {
         uint64_t time = 0;
         auto it = GetStartIterator(timestamp);
         operation.start_time = timestamp;
         while (it != shedule_.end() && time < timespan) {
-            work_process_.insert({timestamp, std::min(it->end, timestamp + timespan - time), id});
+            work_process_.insert(
+                {timestamp, std::min(it->end, timestamp + timespan - time),
+                 id});
             time += it->GetTimeSpan(timestamp);
             it = std::next(it);
             timestamp = it->start;
@@ -102,9 +115,11 @@ public:
 
     void PrintGant() {
         for (auto inter : work_process_) {
-            std::cout << "(" << inter.start << ", " << inter.end << ", " << inter.operation << ") ";
+            std::cout << "(" << inter.start << ", " << inter.end << ", "
+                      << inter.operation << ") ";
         }
     }
+
 private:
     std::set<Tool::TimeInterval>::const_iterator GetStartIterator(
         uint64_t timestamp) {
@@ -126,8 +141,7 @@ private:
         return shedule_.end();
     }
 
-    const std::set<TimeInterval>
-        shedule_;  // изначальное расписание исполнителя
+    std::set<TimeInterval> shedule_;  // изначальное расписание
     std::set<NamedTimeInterval> work_process_;  // расписание в которое будем
                                                 // класть назначенную операцию
 };

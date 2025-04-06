@@ -4,6 +4,7 @@
 #include "problem_data.h"
 #include "tool.h"
 #include "work.h"
+#include "solver.h"
 
 
 int main() {
@@ -20,6 +21,10 @@ int main() {
     std::ifstream fin;
     fin.open("../test_data/data.DAT");
     ProblemData pd(fin);
+    fin.close();
     pd.print();
+
+    Solver solver{ProblemData(fin)};
+
     return 0;
 }
