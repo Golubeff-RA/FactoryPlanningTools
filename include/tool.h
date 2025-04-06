@@ -11,7 +11,8 @@ class Tool {
 public:
     struct TimeInterval {
         TimeInterval(uint64_t start, uint64_t end) : start(start), end(end) {}
-        TimeInterval(const TimeInterval& other) : start(other.start), end(other.end) {}
+        TimeInterval(const TimeInterval& other)
+            : start(other.start), end(other.end) {}
 
         uint64_t GetTimeSpan() const { return end - start; }
 
@@ -50,7 +51,7 @@ public:
     };
 
     Tool(const std::set<TimeInterval>& shedule) : shedule_(shedule) {}
-    Tool(std::initializer_list<TimeInterval>& shedule) : shedule_(shedule){}
+    Tool(std::initializer_list<TimeInterval>& shedule) : shedule_(shedule) {}
 
     Tool& operator=(const Tool& other) {
         shedule_ = other.shedule_;
@@ -93,6 +94,9 @@ public:
     // Положим в именованное расписание исполнителя выполнение операции
     void Appoint(Work::Operation& operation, uint32_t id, uint64_t timestamp,
                  uint64_t timespan) {
+        if (work_process_.find(NamedTimeInterval(timestamp, timestamp, id)) != work_process_.end()) {
+            throw std::runtime_error("Collision!");
+        }
         uint64_t time = 0;
         auto it = GetStartIterator(timestamp);
         operation.start_time = timestamp;
@@ -104,7 +108,7 @@ public:
             it = std::next(it);
             timestamp = it->start;
         }
-        operation.end_time = (work_process_.end().operator--())->end;
+        operation.end_time = std::prev(work_process_.end())->end;
     }
 
     void PrintShedule() {
@@ -118,6 +122,38 @@ public:
             std::cout << "(" << inter.start << ", " << inter.end << ", "
                       << inter.operation << ") ";
         }
+    }
+
+    // проверяем что все интервалы из work_process внутри shedule_
+    // и work_process не имеет коллизий
+    bool CheckCollisions() {
+        if (work_process_.empty()) {
+            return true;
+        }
+        for (auto& work_proc : work_process_) {
+            bool checkIntersects = false;
+            for (auto& shed : shedule_){
+                if (work_proc.Intersects(shed)) {
+                    checkIntersects = true;
+                    if (shed != work_proc) {
+                        return false;
+                    }
+                }
+            }
+
+            if (!checkIntersects) {
+                return false;
+            }
+        }
+
+        for (auto it = work_process_.begin();
+             it != std::prev(work_process_.end()); ++it) {
+            if (it->Intersects(*std::next(it))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 private:

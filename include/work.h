@@ -25,9 +25,7 @@ public:
               previous_ops_id(previous),
               possible_tools(tools){};
         Operation(bool stoppable, const std::set<uint64_t>& previous)
-            : stoppable(stoppable),
-              previous_ops_id(previous)
-              {};
+            : stoppable(stoppable), previous_ops_id(previous){};
     };
 
     bool CanBeAppointed(const Operation& operation, uint64_t timestamp) {
@@ -64,6 +62,16 @@ public:
             std::cout << "prev*/";
         }
         std::cout << "\n\n";
+    }
+
+    uint64_t getStartTime() const { return start_time_; }
+
+    uint64_t getDirective() const { return directive_; }
+
+    double getFineCoef() const { return fine_coef_; }
+
+    const std::vector<Operation*>& getOperations() const {
+        return operations_;
     }
 
 private:

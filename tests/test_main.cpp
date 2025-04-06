@@ -36,6 +36,23 @@ TEST(Tools__Test, can_start_work) {
     ASSERT_EQ(test_tool.CanStartWork(op2, 51, 12), true);
 }
 
+TEST(Tools__Test, check_collisions) {
+    Tool test_tool ({{35, 40}, {50, 70}, {10, 30}, {75, 80}});
+    Work::Operation op1 {true, {}, {0}};
+    Work::Operation op2 {true, {}, {0}};
+
+    ASSERT_EQ(test_tool.CanStartWork(op1, 10, 15), true);
+    ASSERT_EQ(test_tool.CanStartWork(op2, 10, 15), true);
+
+    test_tool.Appoint(op1, 0, 10, 10);
+    test_tool.Appoint(op2, 1, 50, 12);
+    
+    ASSERT_EQ(test_tool.CheckCollisions(), true);
+    test_tool.Appoint(op1, 3, 11, 5);
+    ASSERT_EQ(test_tool.CheckCollisions(), false);
+    ASSERT_THROW(test_tool.Appoint(op1, 5, 10, 3), std::runtime_error);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

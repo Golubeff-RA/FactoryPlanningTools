@@ -10,9 +10,34 @@ public:
         data_ = data;
     }
 
-    uint64_t Solve(std::vector<Tool::NamedTimeInterval>& gant_plot);
+    uint64_t Solve();
 
-    bool CheckSolution(const std::vector<Tool::NamedTimeInterval>& gant_plot);
+    
 private:
+    // проверка ранних времён начала
+    bool CheckStartTimes() {
+        for (auto& work : data_.works_) {
+            auto start = work.getStartTime();
+            for (auto& op : work.getOperations()) {
+                if (op->start_time < start) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // проверка на коллизии в интервалах исполнения
+    bool CheckCollisions() {
+        for (auto& tool : data_.tools_) {
+            if (tool.CheckCollisions()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // проверка что все операции назначены
     ProblemData data_;
 };
