@@ -9,6 +9,24 @@ class ProblemData {
 public:
     // здесь будем парсить данные из файла
     ProblemData(std::ifstream& input);
+    /*ProblemData(const ProblemData& other)
+        : works(other.works),
+          operations(other.operations),
+          tools(other.tools),
+          times_matrix(other.times_matrix) {}
+    ProblemData(ProblemData&& other)
+        : works(std::move(other.works)),
+          operations(std::move(other.operations)),
+          tools(std::move(other.tools)),
+          times_matrix(std::move(other.times_matrix)) {}
+
+    ProblemData& operator=(const ProblemData& other) {
+        this->works = other.works;
+        this->operations = other.operations;
+        this->tools = other.tools;
+        this->times_matrix = other.times_matrix;
+        return *this;
+    }*/
     // все работы (графы операций)
     std::vector<Work> works;
     // все операции необходимые для выполнения всех работ
@@ -79,6 +97,7 @@ ProblemData::ProblemData(std::ifstream& input) {
         works.push_back(Work{work_starts_[i], work_direct_[i], work_fines_[i],
                              work_operations_[i], operations});
     }
+    
 }
 
 void ProblemData::ParseTools(std::string& str, int idTool) {

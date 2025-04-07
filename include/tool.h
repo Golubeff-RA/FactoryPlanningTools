@@ -28,7 +28,7 @@ public:
         const uint64_t end;
         // проверяет интервал на пересечение с другим
         bool Intersects(const TimeInterval& other) const {
-            return !(end < other.start || other.end < start);
+            return !(end <= other.start || other.end < start);
         }
 
         bool operator<(const TimeInterval& other) const {
@@ -122,6 +122,7 @@ public:
             std::cout << "(" << inter.start << ", " << inter.end << ", "
                       << inter.operation << ") ";
         }
+
     }
 
     // проверяем что все интервалы из work_process внутри shedule_
@@ -155,7 +156,11 @@ public:
 
         return true;
     }
-
+    void GetSheduleStarts(std::set<uint64_t>& timestamps) const {
+        for (const auto& shed : shedule_) {
+            timestamps.insert(shed.start);
+        }
+    }   
 private:
     std::set<Tool::TimeInterval>::const_iterator GetStartIterator(
         uint64_t timestamp) {
@@ -180,4 +185,5 @@ private:
     std::set<TimeInterval> shedule_;  // изначальное расписание
     std::set<NamedTimeInterval> work_process_;  // расписание в которое будем
                                                 // класть назначенную операцию
+    
 };

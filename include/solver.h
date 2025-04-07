@@ -1,60 +1,79 @@
 #pragma once
+#include <expected>
+#include <memory>
+#include <queue>
+
 #include "problem_data.h"
 
-//здесь будем решать задачу
+using CheckType = std::expected<bool, std::string>;
+// здесь будем решать задачу
 class Solver {
 public:
-    Solver(const ProblemData& data) : data_(data) {};
+    Solver(ProblemData* data) : data_(data){};
+    // новые данные задачи
+    //void SetProblemData(std::shared_ptr<ProblemData> data) { data_ = data; }
 
-    uint64_t Solve();
-
-    bool CheckSolution();
+    void Solve() {
+        std::set<uint64_t> timestamps;
+        FillStartTimes(timestamps);
+        std::set<size_t> R;  // множество доступных станков
+        // основной цикл по событиям
+        while (!timestamps.empty()) {
+            current_time = *timestamps.begin();
+            timestamps.erase(timestamps.begin());
+            std::vector<size_t> F;
+            // фронт операций
+            for (auto& work : data_->works) {
+                for (auto& op_idx : work.operation_ids) {
+                    if (work.CanBeAppointed(op_idx, current_time)) {
+                        F.push_back(op_idx);
+                    }
+                }
+            }
     
-private:
-    // проверка ранних времён начала
-    /*bool CheckStartTimes() {
-        for (auto& work : data_.works_) {
-            auto start = work.getStartTime();
-            for (auto& op : work.getOperations()) {
-                if (op->start_time < start) {
-                    return false;
+            SortFront(F);
+            // собираем множесво возможных исполнителей для фронта
+            for (size_t oper : F) {
+                for (size_t i : data_->operations[oper].possible_tools) {
+                    if (data_->tools[i].CanStartWork(
+                            data_->operations[oper], current_time,
+                            data_->times_matrix[oper][i])) {
+                        R.insert(i);
+                    }
                 }
             }
-        }
-        return true;
-    }
 
-    // проверка на коллизии в интервалах исполнения
-    bool CheckCollisions() {
-        for (auto& tool : data_.tools_) {
-            if (tool.CheckCollisions()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // проверка что все операции назначены
-    // и назначены в соответствии с графом создания
-    bool CheckAllAppointedRight() {
-        for (auto& work : data_.works_) {
-            auto& oper_vec = work.getOperations();
-            for (auto& op : oper_vec) {
-                //проверим что операция назначена
-                if (op->end_time == 0 || op->start_time == 0) {
-                    return false;
-                }
-                //проверим что все её предшественники выполнены
-                for (auto& pre : op->previous_ops_id) {
-                    if (oper_vec[pre]->end_time > op->start_time) {
-                        return false;
+            // возьмём первую операцию из фронта как самую важную
+            for (size_t oper_in_f : F) {
+                Operation& cool_operation = data_->operations[oper_in_f];
+                for (size_t r : R) {
+                    if (cool_operation.possible_tools.contains(r)) {
+                        data_->tools[r].Appoint(
+                            cool_operation, oper_in_f, current_time,
+                            data_->times_matrix[oper_in_f][r]);
+                        timestamps.insert(cool_operation.end_time);
+                        R.erase(r);
+                        break;
                     }
                 }
             }
         }
+    }
 
-        return true;
-    }*/
+    void SortFront(std::vector<size_t> front) {}
 
-    ProblemData data_;
+    //CheckType CheckSolution() {}
+
+private:
+    void FillStartTimes(std::set<uint64_t>& times) {
+        for (const auto& work : data_->works) {
+            times.insert(work.start_time);
+        }
+
+        for (const auto& tool : data_->tools) {
+            tool.GetSheduleStarts(times);
+        }
+    }
+    uint64_t current_time = 0;
+    ProblemData* data_;
 };

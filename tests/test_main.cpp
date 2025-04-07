@@ -7,14 +7,41 @@
 #include "work.h"
 
 const std::vector<std::vector<uint64_t>> kTimesMatrix{
-    {1, 0, 4, 5},  {0, 2, 3, 1}, {0, 0, 0, 4}, {5, 1, 3, 5},
-    {10, 5, 1, 0}, {0, 3, 4, 0}, {3, 5, 3, 0}, {0, 0, 10, 5}};
+    {1, 0, 4, 5},  
+    {0, 2, 3, 1}, 
+    {0, 0, 0, 4}, 
+    {5, 1, 3, 5},
+    {10, 5, 1, 0}, 
+    {0, 3, 4, 0}, 
+    {3, 5, 3, 0}, 
+    {0, 0, 10, 5}};
 
 const std::vector<Tool> kTools{
     Tool({{5, 10}, {15, 35}, {40, 47}, {50, 62}}),
     Tool({{35, 40}, {50, 70}, {10, 30}, {75, 80}, {88, 105}}),
     Tool({{1, 5}, {15, 25}, {27, 37}, {44, 55}, {90, 100}}),
     Tool({{3, 10}, {25, 50}, {60, 90}})};
+
+// g0: 0->1->2
+// g1: 3->4
+//      ->5->6
+//      ->7
+
+const std::vector<Operation> kOperations{
+    Operation({true, {}, {0, 2, 3}}),
+    Operation({true, {1}, {1, 2, 3}}),
+    Operation({true, {2}, {3}}),
+    Operation({false, {}, {0, 1, 2, 3}}),
+    Operation({true, {3}, {0, 1, 2}}),
+    Operation({true, {3}, {1, 2}}),
+    Operation({true, {5}, {0, 1, 2}}),
+    Operation({false, {3}, {2, 3}})
+};
+
+const std::vector<Work> kWorks{
+    Work({10, 50, 1.5, {0, 1, 2}, kOperations}),
+    Work({20, 70, 2.3, {3, 4, 5, 6, 7}, kOperations})
+};
 
 TEST(Tools__Test, can_start_work) {
     Tool test_tool({{35, 40}, {50, 70}, {10, 30}, {75, 80}});
@@ -61,6 +88,7 @@ void CompareMatrix(const std::vector<std::vector<uint64_t>>& left,
 TEST(Updated_parser, base_parsing) {
     std::ifstream input_file("../test_data/data.DAT");
     ProblemData test_data(input_file);
+    input_file.close();
     ASSERT_EQ(test_data.operations.size(), 5);
     ASSERT_EQ(test_data.tools.size(), 3);
     ASSERT_EQ(test_data.works.size(), 2);
@@ -69,9 +97,14 @@ TEST(Updated_parser, base_parsing) {
     CompareMatrix(test_data.times_matrix, true_times);
 
     EXPECT_TRUE((test_data.operations.begin()->possible_tools == std::set<size_t>{1, 2}));
-
 }
 
+TEST(Appoint__Test, simple) {
+    ASSERT_EQ(kWorks[0].CanBeAppointed(0, 5), false);
+    ASSERT_EQ(kWorks[0].CanBeAppointed(0, 10), true);
+    ASSERT_EQ(kWorks[0].CanBeAppointed(1, 10), false);
+
+}
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

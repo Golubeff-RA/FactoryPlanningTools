@@ -116,7 +116,7 @@ public:
           operation_ids(operation_ids),
           ref_to_all_opers_(ref_to_all_opers) {}
 
-    bool CanBeAppointed(size_t oper_id, uint64_t timestamp) {
+    bool CanBeAppointed(size_t oper_id, uint64_t timestamp) const{
         if (!operation_ids.contains(oper_id) || timestamp < start_time) {
             return false;
         }
@@ -129,7 +129,7 @@ public:
             }
         }
 
-        return oper.start_time != 0;
+        return oper.start_time == 0;
     }
 
 private:
