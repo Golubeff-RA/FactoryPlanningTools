@@ -77,3 +77,4 @@ private:
     uint64_t current_time = 0;
     ProblemData* data_;
 };
+

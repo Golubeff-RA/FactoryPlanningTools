@@ -232,6 +232,6 @@ void ProblemData::fillWork(std::ifstream& input) {
         work_operations_[idx_work_].insert(std::stoul(str1));
         work_operations_[idx_work_].insert(std::stoul(str2));
     }
-
+  
     ++idx_work_;
 }

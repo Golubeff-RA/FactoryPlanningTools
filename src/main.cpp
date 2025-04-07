@@ -15,6 +15,7 @@ int main() {
     Solver solv(&test_data);
     solv.Solve();
 
+
     std::cout << "Shedules:\n";
     for (auto& tool : test_data.tools) {
         tool.PrintShedule();
