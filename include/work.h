@@ -1,9 +1,5 @@
 #pragma once
-#include <cstdint>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <optional>
+
 #include <set>
 #include <vector>
 
@@ -19,6 +15,12 @@ struct Operation {
         : stoppable(stoppable),
           previous_op_id(previous_op_id),
           possible_tools(possible_tools){};
+
+    void CheckAppointment() const {
+        if (start_time == 0 || end_time == 0) {
+            throw std::runtime_error("Операция не назначена");
+        }
+    }
 };
 
 // такая структура Work должна быть круче

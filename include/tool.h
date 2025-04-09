@@ -1,7 +1,5 @@
 #pragma once
-#include <cstdint>
-#include <iostream>
-#include <optional>
+
 #include <set>
 #include <vector>
 
@@ -94,7 +92,8 @@ public:
     // Положим в именованное расписание исполнителя выполнение операции
     void Appoint(Operation& operation, uint32_t id, uint64_t timestamp,
                  uint64_t timespan) {
-        if (work_process_.find(NamedTimeInterval(timestamp, timestamp, id)) != work_process_.end()) {
+        if (work_process_.contains(
+                NamedTimeInterval(timestamp, timestamp, id))) {
             throw std::runtime_error("Collision!");
         }
         uint64_t time = 0;
@@ -111,56 +110,79 @@ public:
         operation.end_time = std::prev(work_process_.end())->end;
     }
 
-    void PrintShedule() {
+    void PrintShedule(std::ostream& out_stream) {
         for (auto inter : shedule_) {
-            std::cout << "(" << inter.start << ", " << inter.end << ") ";
+            out_stream << "(" << inter.start << ", " << inter.end << ") ";
         }
     }
 
-    void PrintGant() {
+    void PrintGant(std::ostream& out_stream) {
         for (auto inter : work_process_) {
-            std::cout << "(" << inter.start << ", " << inter.end << ", "
+            out_stream << "(" << inter.start << ", " << inter.end << ", "
                       << inter.operation << ") ";
         }
+    }
 
+    bool OperationDoneHere(size_t op_id)  const {
+        for (const auto& gant : work_process_) {
+            if (gant.operation == op_id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    uint64_t GetWorkingTime(size_t id_op) const{
+        uint64_t total_time = 0;
+        for (const auto& gant : work_process_) {
+            if (gant.operation == id_op) {
+                total_time += gant.GetTimeSpan();
+            }
+        }
+        return total_time;
     }
 
     // проверяем что все интервалы из work_process внутри shedule_
     // и work_process не имеет коллизий
-    bool CheckCollisions() {
+    void CheckCollisions() const {
         if (work_process_.empty()) {
-            return true;
+            return;
         }
         for (auto& work_proc : work_process_) {
             bool checkIntersects = false;
-            for (auto& shed : shedule_){
+            for (auto& shed : shedule_) {
                 if (work_proc.Intersects(shed)) {
                     checkIntersects = true;
                     if (shed != work_proc) {
-                        return false;
+                        throw std::runtime_error(
+                            "График Ганта не соответствует расписанию");
                     }
                 }
             }
 
             if (!checkIntersects) {
-                return false;
+                throw std::runtime_error(
+                    "Интервал из графика Ганта не принадлежит расписанию");
             }
         }
 
         for (auto it = work_process_.begin();
              it != std::prev(work_process_.end()); ++it) {
             if (it->Intersects(*std::next(it))) {
-                return false;
+                throw std::runtime_error("Коллизия в графике Ганта");
             }
         }
-
-        return true;
     }
+    
     void GetSheduleStarts(std::set<uint64_t>& timestamps) const {
         for (const auto& shed : shedule_) {
             timestamps.insert(shed.start);
         }
-    }   
+    }
+
+    void DestroyWorkProcess() { work_process_.insert({1000, 1002, 0}); }
+
 private:
     std::set<Tool::TimeInterval>::const_iterator GetStartIterator(
         uint64_t timestamp) {
@@ -185,5 +207,4 @@ private:
     std::set<TimeInterval> shedule_;  // изначальное расписание
     std::set<NamedTimeInterval> work_process_;  // расписание в которое будем
                                                 // класть назначенную операцию
-    
 };

@@ -68,9 +68,9 @@ TEST(Tools__Test, check_collisions) {
     test_tool.Appoint(op1, 0, 10, 10);
     test_tool.Appoint(op2, 1, 50, 12);
 
-    ASSERT_EQ(test_tool.CheckCollisions(), true);
+    ASSERT_NO_THROW(test_tool.CheckCollisions());
     test_tool.Appoint(op1, 3, 11, 5);
-    ASSERT_EQ(test_tool.CheckCollisions(), false);
+    ASSERT_THROW(test_tool.CheckCollisions(), std::runtime_error);
     ASSERT_THROW(test_tool.Appoint(op1, 5, 10, 3), std::runtime_error);
 }
 
@@ -105,6 +105,7 @@ TEST(Appoint__Test, simple) {
     ASSERT_EQ(kWorks[0].CanBeAppointed(1, 10), false);
 
 }
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
